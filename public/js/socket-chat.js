@@ -7,8 +7,6 @@ if (!params.has('nombre') || !params.has('sala')) {
     throw new Error('El nombre y sala son necesarios');
 };
 
-$('#title').text(`Sala de mensaje ${params.get('sala')}`);
-
 let usuario = {
     nombre: params.get('nombre'),
     sala: params.get('sala')
@@ -18,7 +16,7 @@ socket.on('connect', function() {
     console.log('Conectado al servidor');
 
     socket.emit('entrarChat', usuario, (res) => {
-        console.log('Usuarios conectados');
+        renderizarUsuarios(res);
         console.log(res);
     });
 });
@@ -29,12 +27,13 @@ socket.on('disconnect', function() {
 });
 
 socket.on('listaPersona', (data) => {
-    console.log(data);
+    renderizarUsuarios(data);
 });
 
 // Escuchar información
 socket.on('crearMensaje', (mensaje) => {
-    console.log('Servicor:', mensaje);
+    renderizarMensajes(mensaje, false);
+    scrollBottom();
 });
 
 // Mensajes privados
